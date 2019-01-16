@@ -4,7 +4,9 @@ r = 255;
 g = 0;
 b = 0;
 case = 1;
-t = timer
+t = timer;
+//dir is direction, 1 up and 0 down
+dir = 1;
 start timer
 //5 minute while loop
 while (t < 300000) {
@@ -58,11 +60,17 @@ while (t < 300000) {
        }
       break; 
   }
-  if (i == LED_BAR_COUNT + 1) {
-    i = 0;
+  if (dir == 1){
+    if (i == LED_BAR_COUNT) {
+      dir = 0;
+      }
+    i = i + 1;
     }
   else {
-    i = i + 1;
+    if (i == 1) {
+      dir = 1;
+      }
+    i = i - 1;
     }
   if (t > 2) {
     setBarColor(led_bar[i-2], 0, 0, 0, NORMAL_RANGE);
