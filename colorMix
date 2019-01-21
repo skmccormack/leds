@@ -1,0 +1,80 @@
+void colorMix () {
+  // Define three sets of random colors
+  r1 = rand() % 256;
+  g1 = rand() % 256;
+  b1 = rand() % 256;
+  r2 = rand() % 256;
+  g2 = rand() % 256;
+  b2 = rand() % 256;
+  if (r1 + r2 >= 255) {
+    r3 = 255;
+    }
+  else {
+    r3 = r1 + r2;
+    }
+  if (b1 + b2 >= 255) {
+    b3 = 255;
+    }
+  else {
+    b3 = b1 + b2;
+    }
+  if (g1 + g2 >= 255) {
+    g3 = 255;
+    }
+  else {
+    g3 = g1 + g2;
+    }
+  // Start timer
+  
+  t = timer;
+  i = 0;
+  
+  while (t < 300000) {
+      
+    if (i == LED_BAR_COUNT) {
+      i = 0;
+      r1 = rand() % 256;
+      g1 = rand() % 256;
+      b1 = rand() % 256;
+      r2 = rand() % 256;
+      g2 = rand() % 256;
+      b2 = rand() % 256;
+      if (r1 + r2 >= 255) {
+        r3 = 255;
+        }
+      else {
+        r3 = r1 + r2;
+        }
+      if (b1 + b2 >= 255) {
+        b3 = 255;
+        }
+      else {
+        b3 = b1 + b2;
+        }
+      if (g1 + g2 >= 255) {
+        g3 = 255;
+        }
+      else {
+        g3 = g1 + g2;
+        }
+      }
+      
+    else
+      if (i >= LED_BAR_COUNT - i - 1) {
+      setBarColor(led_bar[i], r3, g3, b3, NORMAL_RANGE);
+      setBarColor(led_bar[LED_BAR_COUNT - i - 1], r3, g3, b3, NORMAL_RANGE);
+      delay(1000);
+      }
+    else {
+      setBarColor(led_bar[i], r1, g1, b1, NORMAL_RANGE);
+      setBarColor(led_bar[LED_BAR_COUNT - i - 1], r2, g2, b2, NORMAL_RANGE);
+      delay(1000);
+      }
+    if (i >= 4) {
+      setBarColor(led_bar[i - 4], 0, 0, 0, NORMAL_RANGE);
+      setBarColor(led_bar[LED_BAR_COUNT - i + 3], 0, 0, 0, NORMAL_RANGE);
+      }
+    i++;
+  }
+)
+      
