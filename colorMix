@@ -27,7 +27,7 @@ void colorMix (void)
   int16_t g_fade_perc;
 
   // Cases for what to light up
-  int16_t case_mix = 1;
+  uint8_t case_m = 1;
   
   //uint16_t t = timer;
 
@@ -37,7 +37,7 @@ void colorMix (void)
   // 5 minute while loop
   while (anim_clock < 300000) {
 
-    switch(case_mix) {
+    switch(case_m) {
       // Initialize values
       case 1:
         // Set counter to zero
@@ -65,7 +65,7 @@ void colorMix (void)
         b_fade_perc = b3 / (LED_BAR_COUNT/2);
         g_fade_perc = g3 / (LED_BAR_COUNT/2);
   
-        case_mix = 2;
+        case_m = 2;
   
         break;
       
@@ -85,12 +85,15 @@ void colorMix (void)
 
         // Check if met middle
         // If LED_BAR_COUNT is even
-        if (i = LED_BAR_COUNT - i) {
-          case_mix = 3;
-        }
-        // If LED_BAR_COUNT is odd
-        else if (i = LED_BAR_COUNT - i - 1) {
-          case_mix = 4;
+        if (i >= LED_BAR_COUNT - i - 1) {
+          // If LED_BAR_COUNT is even
+          if (LED_BAR_COUNT % 2 == 0) {
+            case_m = 3;
+          }
+          // If LED_BAR_COUNT is odd
+          else {
+            case_m = 4;
+          }
         }
 
         break;
@@ -116,7 +119,7 @@ void colorMix (void)
         setBarColor(led_bar[LED_BAR_COUNT - i - 1], r3, g3, b3, NORMAL_RANGE);
         delay(1000);
 
-        case_mix = 5;
+        case_m = 5;
         i++;
 
         break;
@@ -139,7 +142,7 @@ void colorMix (void)
         setBarColor(led_bar[i], r3, g3, b3, NORMAL_RANGE);
         delay(1000);
 
-        case_mix = 5;
+        case_m = 5;
         i++;
 
         break;
@@ -164,7 +167,7 @@ void colorMix (void)
 
         // Restart when all LEDs have been truned off
         if (i == LED_BAR_COUNT + 2) {
-          case_mix = 1;
+          case_m = 1;
         }
         else {
           i++;
@@ -172,7 +175,7 @@ void colorMix (void)
 
         break;
     } // end case
-  
+    
   } //end while
   
   //use this to time the animation for now
