@@ -1,148 +1,181 @@
-void colorMix () {
-  // Define two colors by randoming selecting rgb values
-  int r1 = rand() % 256;
-  int g1 = rand() % 256;
-  int b1 = rand() % 256;
-  int r2 = rand() % 256;
-  int g2 = rand() % 256;
-  int b2 = rand() % 256;
-  
-// Add the two r values for the mixed value of r, don't let it go over max
-  if (r1 + r2 >= 255) {
-    r3 = 255;
-    }
-  else {
-    r3 = r1 + r2;
-    }
-    
-// Add the two b values for the mixed value of b, don't let it go over max
-  if (b1 + b2 >= 255) {
-    b3 = 255;
-    }
-  else {
-    b3 = b1 + b2;
-    }
-    
-// Add the two g values for the mixed value of g, don't let it go over max
-  if (g1 + g2 >= 255) {
-    g3 = 255;
-    }
-  else {
-    g3 = g1 + g2;
-    }
-    
-// Percent of r3, b3. and g3 to fade
-  int r_fade_perc = r3 / 10;
-  int b_fade_perc = b3 / 10;
-  int g_fade_perc = g3 / 10;
+void colorMix (void) 
+{
 
-// Start timer
+  // colorMix func
+
+  // Define Variables
+
+  // Counter
+  int16_t i;
   
-  int t = timer;
-  int i = 0;
-  
-// Play while loop animation for 5 minutes
-  while (t < 300000) {
-  // Wait until 4 imaginary lights past actual light bars
-    if (i == LED_BAR_COUNT + 3) {
-      i = 0;
-      
-  // Set initial random rgb values
-      r1 = rand() % 256;
-      g1 = rand() % 256;
-      b1 = rand() % 256;
-      r2 = rand() % 256;
-      g2 = rand() % 256;
-      b2 = rand() % 256;
-      
-  // Add the two r values for the mixed value of r, don't let it go over max
-      if (r1 + r2 >= 255) {
-        r3 = 255;
-        }
-      else {
-        r3 = r1 + r2;
-        }
-        
-  // Add the two b values for the mixed value of b, don't let it go over max
-      if (b1 + b2 >= 255) {
-        b3 = 255;
-        }
-      else {
-        b3 = b1 + b2;
-        }
-       
-  // Add the two g values for the mixed value of g, don't let it go over max
-      if (g1 + g2 >= 255) {
-        g3 = 255;
-        }
-      else {
-        g3 = g1 + g2;
-        }
-      }
-      
+  // Define two colors by randoming selecting rgb values
+  int16_t r1;
+  int16_t g1;
+  int16_t b1;
+  int16_t r2;
+  int16_t g2;
+  int16_t b2;
+
+  // Mixed values
+  int16_t r3;
+  int16_t b3;
+  int16_t g3;
+    
   // Percent of r3, b3. and g3 to fade
-    int r_fade_perc = r3 / 10;
-    int b_fade_perc = b3 / 10;
-    int g_fade_perc = g3 / 10;
+  int16_t r_fade_perc;
+  int16_t b_fade_perc;
+  int16_t g_fade_perc;
+
+  // Cases for what to light up
+  int16_t case_mix = 1;
+  
+  //uint16_t t = timer;
+
+  //start timer
+  start_anim_clock = TRUE;
+  
+  // 5 minute while loop
+  while (anim_clock < 300000) {
+
+    switch(case_mix) {
+      // Initialize values
+      case 1:
+        // Set counter to zero
+        i = 0;
+        
+        // Set initial random rgb values
+        r1 = rand() % 127;
+        g1 = rand() % 127;
+        b1 = rand() % 127;
+        r2 = rand() % 127;
+        g2 = rand() % 127;
+        b2 = rand() % 127;
+        
+        // Add the two r values for the mixed value of r
+        r3 = r1 + r2;
+          
+        // Add the two b values for the mixed value of b
+        b3 = b1 + b2;
+         
+        // Add the two g values for the mixed value of g
+        g3 = g1 + g2;
+        
+        // Percent of r3, b3. and g3 to fade
+        r_fade_perc = r3 / (LED_BAR_COUNT/2);
+        b_fade_perc = b3 / (LED_BAR_COUNT/2);
+        g_fade_perc = g3 / (LED_BAR_COUNT/2);
+  
+        case_mix = 2;
+  
+        break;
       
-  // Reached middle, setting LEDs to new color and turning off past LEDs
-    else
-      if ((i = LED_BAR_COUNT - i - 1) || (i = LED_BAR_COUNT - i)) {
-      // Set middle value(s) to one third of the mixed color
+      // Before reaching the middle, turning LEDs on from top and bottom using colors 1 and 2
+      case 2:
+        setBarColor(led_bar[i], r1, g1, b1, NORMAL_RANGE);
+        setBarColor(led_bar[LED_BAR_COUNT - i - 1], r2, g2, b2, NORMAL_RANGE);
+        delay(1000);
+        
+        // Turn off LEDs three away
+        if (i >= 3) {
+          setBarColor(led_bar[i-3], 0, 0, 0, NORMAL_RANGE);
+          setBarColor(led_bar[LED_BAR_COUNT - i + 2], 0, 0, 0, NORMAL_RANGE);
+        } //end if (turn off LEDs)
+
+        i++;
+
+        // Check if met middle
+        // If LED_BAR_COUNT is even
+        if (i = LED_BAR_COUNT - i) {
+          case_mix = 3;
+        }
+        // If LED_BAR_COUNT is odd
+        else if (i = LED_BAR_COUNT - i - 1) {
+          case_mix = 4;
+        }
+
+        break;
+        
+      // Reached middle (even), setting LEDs to new color and turning off past LEDs
+      case 3:
+        // Set middle value(s) to one third of the mixed color
         setBarColor(led_bar[i], r3/3, g3/3, b3/3, NORMAL_RANGE);
         setBarColor(led_bar[LED_BAR_COUNT - i - 1], r3/3, g3/3, b3/3, NORMAL_RANGE);
         delay(1000);
         
-      // Turn off LEDs 2 away from middle(s) and set middle value(s) to two thirds of the mixed color
-        setBarColor(led_bar[i+2], 0, 0, 0, NORMAL_RANGE);
+        // Turn off LEDs 2 away from middle(s) and set middle value(s) to two thirds of the mixed color
+        setBarColor(led_bar[i-2], 0, 0, 0, NORMAL_RANGE);
         setBarColor(led_bar[LED_BAR_COUNT - i + 1], 0, 0, 0, NORMAL_RANGE);
         setBarColor(led_bar[i], 2*r3/3, 2*g3/3, 2*b3/3, NORMAL_RANGE);
         setBarColor(led_bar[LED_BAR_COUNT - i - 1], 2*r3/3, 2*g3/3, 2*b3/3, NORMAL_RANGE);
         delay(1000);
         
-      // Turn off LEDs 1 away from middle(s) and set middle value(s) to two thirds of the mixed color
-        setBarColor(led_bar[i+1], 0, 0, 0, NORMAL_RANGE);
+        // Turn off LEDs 1 away from middle(s) and set middle value(s) to two thirds of the mixed color
+        setBarColor(led_bar[i-1], 0, 0, 0, NORMAL_RANGE);
         setBarColor(led_bar[LED_BAR_COUNT - i], 0, 0, 0, NORMAL_RANGE);
         setBarColor(led_bar[i], r3, g3, b3, NORMAL_RANGE);
         setBarColor(led_bar[LED_BAR_COUNT - i - 1], r3, g3, b3, NORMAL_RANGE);
-      } // end else if (reached middle)
-      
-  // Past middle, setting new color to LEDs
-    else
-      if (i > LED_BAR_COUNT - i - 1) {
-      // Set new color to LEDs
+        delay(1000);
+
+        case_mix = 5;
+        i++;
+
+        break;
+
+      // Reached middle (odd), setting LEDs to new color and turning off past LEDs
+      case 4:
+        // Set middle value(s) to one third of the mixed color
+        setBarColor(led_bar[i], r3/3, g3/3, b3/3, NORMAL_RANGE);
+        delay(1000);
+        
+        // Turn off LEDs 2 away from middle(s) and set middle value(s) to two thirds of the mixed color
+        setBarColor(led_bar[i+2], 0, 0, 0, NORMAL_RANGE);
+        setBarColor(led_bar[i-2], 0, 0, 0, NORMAL_RANGE);
+        setBarColor(led_bar[i], 2*r3/3, 2*g3/3, 2*b3/3, NORMAL_RANGE);
+        delay(1000);
+        
+        // Turn off LEDs 1 away from middle(s) and set middle value(s) to two thirds of the mixed color
+        setBarColor(led_bar[i+1], 0, 0, 0, NORMAL_RANGE);
+        setBarColor(led_bar[i-1], 0, 0, 0, NORMAL_RANGE);
+        setBarColor(led_bar[i], r3, g3, b3, NORMAL_RANGE);
+        delay(1000);
+
+        case_mix = 5;
+        i++;
+
+        break;
+
+      // Past middle, setting new color to LEDs
+      case 5:
+        // Set new color to LEDs
         setBarColor(led_bar[i], r3, g3, b3, NORMAL_RANGE);
         setBarColor(led_bar[LED_BAR_COUNT - i - 1], r3, g3, b3, NORMAL_RANGE);
         delay(1000);
         
         // Turn off LEDs 3 away
-        if (i >= LED_BAR_COUNT - i - 4) {
+        if (i >= LED_BAR_COUNT - i + 5) {
           setBarColor(led_bar[i-3], 0, 0, 0, NORMAL_RANGE);
           setBarColor(led_bar[LED_BAR_COUNT - i + 2], 0, 0, 0, NORMAL_RANGE);
         } // end if (turn off LEDs)
         
-      // Fade out color
+        // Fade out color
         r3 = r3 - r_fade_perc;
         b3 = b3 - b_fade_perc;
         g3 = g3 - g_fade_perc;
-      } //end else if (past middle)
-      
-  // Before reaching the middle, turning LEDs on from top and bottom using colors 1 and 2
-    else {
-      setBarColor(led_bar[i], r1, g1, b1, NORMAL_RANGE);
-      setBarColor(led_bar[LED_BAR_COUNT - i - 1], r2, g2, b2, NORMAL_RANGE);
-      delay(1000);
-      
-      // Turn of LEDs three away
-        if (i >= 3) {
-          setBarColor(led_bar[i-3], 0, 0, 0, NORMAL_RANGE);
-          setBarColor(led_bar[LED_BAR_COUNT - i + 2], 0, 0, 0, NORMAL_RANGE);
-        } //end if (turn off LEDs)
-        
-    } //end else (not at middle yet)
-    
-    i++;
+
+        // Restart when all LEDs have been truned off
+        if (i == LED_BAR_COUNT + 2) {
+          case_mix = 1;
+        }
+        else {
+          i++;
+        }
+
+        break;
+    } // end case
+  
   } //end while
   
+  //use this to time the animation for now
+  start_anim_clock = FALSE;
+  anim_clock = 0;
 } //end function
-      
